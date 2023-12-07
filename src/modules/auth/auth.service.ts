@@ -45,6 +45,7 @@ export class AuthService {
     if (userLoginDto.remember) {
       expiresIn = this.configService.getOrThrow(EnvKeys.JWT_LONG_EXPIRES); // set 1 day if the user want to remember session
     }
+
     return {
       access_token: this.jwtService.sign(payload, {
         secret: this.configService.getOrThrow(EnvKeys.JWT_SECRET),
@@ -53,13 +54,15 @@ export class AuthService {
     };
   }
 
-  tabletLogin(tabletLoginDto: TabletLoginDto): { access_token: string } {
+  async tabletLogin(tabletLoginDto: TabletLoginDto) {
     const payload = {
       email: tabletLoginDto.email,
       sub: Date.now().toString(),
     };
+    const tablet = await this.tabletService.getTablet(tabletLoginDto.email);
 
     return {
+      tabletId: tablet.id,
       access_token: this.jwtService.sign(payload, {
         secret: this.configService.getOrThrow(EnvKeys.JWT_SECRET),
         expiresIn: this.configService.getOrThrow(

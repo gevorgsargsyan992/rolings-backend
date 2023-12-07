@@ -12,6 +12,7 @@ import { APP_GUARD } from "@nestjs/core";
 import { ThrottlerOptions } from "./config/throttler.config";
 import { RestorePasswordModule } from "./modules/restore-password/restore-password.module";
 import { TabletModule } from "./modules/tablet/tablet.module";
+import { VideoModule } from "./modules/video/video.module";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { TabletModule } from "./modules/tablet/tablet.module";
     VerificationModule,
     RestorePasswordModule,
     TabletModule,
+    VideoModule,
   ],
   providers: [
     AppService,

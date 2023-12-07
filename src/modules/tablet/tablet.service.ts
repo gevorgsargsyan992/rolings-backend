@@ -39,4 +39,14 @@ export class TabletService {
     }
     return tablet;
   }
+
+  async getTablet(email: string) {
+    const tablet = await this.tabletRepository.findOne({
+      where: { uuid: email },
+    });
+    if (!tablet) {
+      return null;
+    }
+    return tablet;
+  }
 }
