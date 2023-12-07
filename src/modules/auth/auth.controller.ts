@@ -20,7 +20,8 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary: "Get auth token for tablet",
+    summary:
+      "Get auth token for tablet. email field is uuid of tablet , the password must be same as backend TABLET_PASSWORD ",
   })
   @UseGuards(LocalAuthGuard)
   @Post("tablet-login")
