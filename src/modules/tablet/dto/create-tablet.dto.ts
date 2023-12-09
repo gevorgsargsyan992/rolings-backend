@@ -9,3 +9,18 @@ export class CreateTabletDto {
   @IsNotEmpty()
   status: number;
 }
+
+export class CreateTabletStatusDto {
+  @IsNumber()
+  @IsNotEmpty()
+  tabletId: number;
+  @IsNumber()
+  @IsNotEmpty()
+  status: number;
+  @IsNumber()
+  @IsNotEmpty()
+  lat: number;
+  @IsNumber()
+  @IsNotEmpty()
+  lng: number;
+}
