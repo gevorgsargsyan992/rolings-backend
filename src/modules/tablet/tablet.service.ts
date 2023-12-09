@@ -2,15 +2,21 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { CreateTabletDto } from "./dto/create-tablet.dto";
+import {
+  CreateTabletDto,
+  CreateTabletStatusDto,
+} from "./dto/create-tablet.dto";
 import { Tablet } from "./entities/tablet.entity";
 import { getEncryptedPassword } from "src/helpers/get-encrypted-password";
+import { TabletStatus } from "./entities/tablet-status.entity";
 
 @Injectable()
 export class TabletService {
   constructor(
     @InjectRepository(Tablet)
-    private tabletRepository: Repository<Tablet>
+    private tabletRepository: Repository<Tablet>,
+    @InjectRepository(TabletStatus)
+    private tabletStatusRepository: Repository<TabletStatus>
   ) {}
 
   async create(body: CreateTabletDto) {
@@ -28,6 +34,22 @@ export class TabletService {
       .execute();
     // create tablet
     return newTablet;
+  }
+
+  async createTabletStatus(body: CreateTabletStatusDto) {
+    const dataForInsert = {
+      status: body.status,
+      tabletId: body.tabletId,
+      lat: body.lat,
+      lng: body.lng,
+    };
+
+    return this.tabletStatusRepository
+      .createQueryBuilder()
+      .insert()
+      .into(TabletStatus)
+      .values(dataForInsert)
+      .execute();
   }
 
   async validate(email: string) {
