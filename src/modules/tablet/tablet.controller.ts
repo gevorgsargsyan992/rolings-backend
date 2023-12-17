@@ -11,7 +11,6 @@ import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 
 @Controller("tablet")
 @ApiTags("Tablet")
-@UseGuards(JwtAuthGuard)
 export class TabletController {
   constructor(private readonly tabletService: TabletService) {}
 
@@ -26,6 +25,7 @@ export class TabletController {
   @ApiOperation({
     summary: "Create tablet status and location by tabletId",
   })
+  @UseGuards(JwtAuthGuard)
   @Post("/status")
   createTabletStatus(@Body() body: CreateTabletStatusDto) {
     return this.tabletService.createTabletStatus(body);
