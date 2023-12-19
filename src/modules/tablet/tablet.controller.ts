@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UseGuards } from "@nestjs/common";
 
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { TabletService } from "./tablet.service";
 import {
@@ -25,6 +25,7 @@ export class TabletController {
   @ApiOperation({
     summary: "Create tablet status and location by tabletId",
   })
+  @ApiBearerAuth("BearerAuth")
   @UseGuards(JwtAuthGuard)
   @Post("/status")
   createTabletStatus(@Body() body: CreateTabletStatusDto) {
