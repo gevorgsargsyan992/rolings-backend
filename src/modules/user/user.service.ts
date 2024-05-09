@@ -64,7 +64,19 @@ export class UserService {
   }
 
   findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository
+      .createQueryBuilder("u")
+      .where({ id })
+      .select([
+        `u.id AS id`,
+        `u.type AS type`,
+        `u.firstName AS "firstName"`,
+        `u.lastName AS "lastName"`,
+        `u.avatarImage AS "avatarImage"`,
+        `u.phoneNumber AS "phoneNumber"`,
+        `u.verificationCode AS "verificationCode"`,
+      ])
+      .getRawOne();
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
