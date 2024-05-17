@@ -74,6 +74,28 @@ export class TabletService {
       .getRawMany();
   }
 
+  async findOne(id: number) {
+    return this.tabletRepository
+      .createQueryBuilder("tb")
+      .select([
+        'tb.id AS "id"',
+        "tb.uuid",
+        'tb.status AS "tabletStatus"',
+        'tb.createdAt AS "createdAt"',
+        'count(vd.id) AS "videoCount"',
+        `json_agg(json_build_object('videoId', vd.id, 'videoName', vd.name, 'tabletVideoId', tbv.id)) AS videos`,
+      ])
+      .leftJoin("tablet-video", "tbv", "tbv.tablet_id = tb.id")
+      .leftJoin(
+        "videos",
+        "vd",
+        `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`
+      )
+      .where("tb.id= :id", { id })
+      .groupBy("tb.id")
+      .getRawMany();
+  }
+
   async validate(email: string) {
     const tablet = await this.tabletRepository.findOne({
       where: { uuid: email },

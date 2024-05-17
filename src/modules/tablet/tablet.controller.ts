@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get } from "@nestjs/common";
+import { Controller, Post, Body, UseGuards, Get, Param } from "@nestjs/common";
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
@@ -38,5 +38,13 @@ export class TabletController {
   @Get()
   findAll() {
     return this.tabletService.findAll();
+  }
+
+  @ApiOperation({
+    summary: "Get tablet info",
+  })
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.tabletService.findOne(+id);
   }
 }
