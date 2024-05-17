@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from "@nestjs/common";
+import { Controller, Post, Body, UseGuards, Get } from "@nestjs/common";
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
@@ -10,6 +10,8 @@ import {
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 
 @Controller("tablet")
+@ApiBearerAuth("BearerAuth")
+@UseGuards(JwtAuthGuard)
 @ApiTags("Tablet")
 export class TabletController {
   constructor(private readonly tabletService: TabletService) {}
@@ -25,10 +27,16 @@ export class TabletController {
   @ApiOperation({
     summary: "Create tablet status and location by tabletId",
   })
-  @ApiBearerAuth("BearerAuth")
-  @UseGuards(JwtAuthGuard)
   @Post("/status")
   createTabletStatus(@Body() body: CreateTabletStatusDto) {
     return this.tabletService.createTabletStatus(body);
+  }
+
+  @ApiOperation({
+    summary: "Get all tablets",
+  })
+  @Get()
+  findAll() {
+    return this.tabletService.findAll();
   }
 }

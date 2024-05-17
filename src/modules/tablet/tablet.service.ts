@@ -9,6 +9,7 @@ import {
 import { Tablet } from "./entities/tablet.entity";
 import { getEncryptedPassword } from "src/helpers/get-encrypted-password";
 import { TabletStatus } from "./entities/tablet-status.entity";
+import { VideoStatus } from "../../helpers/video-status";
 
 @Injectable()
 export class TabletService {
@@ -50,6 +51,27 @@ export class TabletService {
       .into(TabletStatus)
       .values(dataForInsert)
       .execute();
+  }
+
+  async findAll() {
+    return this.tabletRepository
+      .createQueryBuilder("tb")
+      .select([
+        'tb.id AS "id"',
+        "tb.uuid",
+        'tb.status AS "tabletStatus"',
+        'tb.createdAt AS "createdAt"',
+        'count(vd.id) AS "videoCount"',
+      ])
+      .leftJoin("tablet-video", "tbv", "tbv.tablet_id = tb.id")
+      .leftJoin(
+        "videos",
+        "vd",
+        `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`
+      )
+      .groupBy("tb.id")
+      .orderBy("tb.id", "DESC")
+      .getRawMany();
   }
 
   async validate(email: string) {
