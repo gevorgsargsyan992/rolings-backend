@@ -13,6 +13,8 @@ import { ThrottlerOptions } from "./config/throttler.config";
 import { RestorePasswordModule } from "./modules/restore-password/restore-password.module";
 import { TabletModule } from "./modules/tablet/tablet.module";
 import { VideoModule } from "./modules/video/video.module";
+import { MailerModule } from "@nestjs-modules/mailer";
+import { mailerConfig } from "./config/mailer.config";
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { VideoModule } from "./modules/video/video.module";
     RestorePasswordModule,
     TabletModule,
     VideoModule,
+    MailerModule.forRoot(mailerConfig),
   ],
   providers: [
     AppService,

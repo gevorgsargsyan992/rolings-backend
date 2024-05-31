@@ -9,15 +9,14 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { UserTypes } from "src/helpers/user-types";
 import { randomCode } from "../../utils/random-code";
-import { EmailSystemService } from "../email/email.service";
-import { sendGrid } from "../../helpers/sendGrid";
+import { MailerService } from "@nestjs-modules/mailer";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private readonly emailSystemService: EmailSystemService
+    private readonly mailerService: MailerService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -34,7 +33,7 @@ export class UserService {
       verificationCode,
     };
 
-    const newUser = await this.userRepository
+    await this.userRepository
       .createQueryBuilder()
       .insert()
       .into(User)
@@ -45,16 +44,20 @@ export class UserService {
       )
       .execute();
     // Send email
-    const dynamicTemplateData = {
-      code: verificationCode,
-    };
-    await this.emailSystemService.create({
-      email: createUserDto.email,
-      subject: sendGrid.template.VERIFY_EMAIL.subject,
-      templateId: sendGrid.template.VERIFY_EMAIL.id,
-      templateName: sendGrid.template.VERIFY_EMAIL.name,
-      dynamicTemplateData,
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: createUserDto.email,
+        subject: "Confirm your Email",
+        template: "./confirmation", // The name of the template file
+        context: {
+          // Data to be sent to template engine
+          name: createUserDto.name,
+          code: verificationCode,
+        },
+      });
+    } catch (error) {
+      console.log(111111, error);
+    }
 
     return { success: true };
   }

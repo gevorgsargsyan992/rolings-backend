@@ -10,6 +10,7 @@
           "classValidatorShim": true
         }
       }
-    ]
+    ],
+    "assets": [{ "include": "templates/**/*", "outDir": "dist/src" }]
   }
 }
