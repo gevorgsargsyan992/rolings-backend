@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { Repository } from "typeorm";
 import * as dayjs from "dayjs";
+import { MailerService } from "@nestjs-modules/mailer";
 
 import { User } from "../user/entities/user.entity";
 import { sendGrid } from "../../helpers/sendGrid";
@@ -17,6 +18,7 @@ export class VerificationService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
     private readonly emailSystemService: EmailSystemService
   ) {}
 
@@ -83,6 +85,15 @@ export class VerificationService {
       templateId: sendGrid.template.VERIFY_EMAIL.id,
       templateName: sendGrid.template.VERIFY_EMAIL.name,
       dynamicTemplateData,
+    });
+    await this.mailerService.sendMail({
+      to: user.email,
+      subject: "Confirm your Email",
+      template: "./confirmation",
+      context: {
+        name: user.firstName,
+        code: verificationCode,
+      },
     });
     return {
       success: true,
