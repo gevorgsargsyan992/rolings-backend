@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
-import * as dayjs from 'dayjs';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { JwtService } from "@nestjs/jwt";
+import { Repository } from "typeorm";
+import * as dayjs from "dayjs";
 
-import { User } from '../user/entities/user.entity';
-import { sendGrid } from '../../helpers/sendGrid';
-import { EmailSystemService } from '../email/email.service';
-import { randomCode } from '../../utils/random-code';
-import { VerifyUserDto } from './dto/verify-user.dto';
-import { ResendVerificationCodeDto } from './dto/resend-verification-code.dto';
+import { User } from "../user/entities/user.entity";
+import { sendGrid } from "../../helpers/sendGrid";
+import { EmailSystemService } from "../email/email.service";
+import { randomCode } from "../../utils/random-code";
+import { VerifyUserDto } from "./dto/verify-user.dto";
+import { ResendVerificationCodeDto } from "./dto/resend-verification-code.dto";
 
 @Injectable()
 export class VerificationService {
@@ -17,7 +17,7 @@ export class VerificationService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-    private readonly emailSystemService: EmailSystemService,
+    private readonly emailSystemService: EmailSystemService
   ) {}
 
   async update(verifyUserDto: VerifyUserDto) {
@@ -25,16 +25,16 @@ export class VerificationService {
       where: { email: verifyUserDto.email },
     });
     if (!user) {
-      throw new BadRequestException('Something went wrong');
+      throw new BadRequestException("Something went wrong");
     }
     if (user.verifiedAt) {
-      throw new BadRequestException('User already verified');
+      throw new BadRequestException("User already verified");
     }
     if (user.verificationCode !== verifyUserDto.verificationCode) {
-      throw new BadRequestException('Wrong code');
+      throw new BadRequestException("Wrong code");
     }
     if (!dayjs().isBefore(dayjs(user.codeExpiresAt))) {
-      throw new BadRequestException('Code is already expires');
+      throw new BadRequestException("Code is already expires");
     }
     await this.userRepository.update(verifyUserDto, {
       verifiedAt: new Date(),
@@ -53,6 +53,7 @@ export class VerificationService {
         email: user.email,
         sub: Date.now().toString(),
       }),
+      id: user.id,
     };
   }
 
@@ -61,7 +62,7 @@ export class VerificationService {
       where: { email: dto.email },
     });
     if (!user) {
-      throw new BadRequestException('Something went wrong');
+      throw new BadRequestException("Something went wrong");
     }
 
     const verificationCode = randomCode();
@@ -71,7 +72,7 @@ export class VerificationService {
       },
       {
         verificationCode,
-      },
+      }
     );
     const dynamicTemplateData = {
       code: verificationCode,
