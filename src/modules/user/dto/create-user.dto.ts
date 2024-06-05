@@ -25,4 +25,9 @@ export class CreateUserDto extends EmailDto {
       "Password must include letter, number and at least one Uppercase letter",
   })
   password: string;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  companyName: string;
 }

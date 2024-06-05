@@ -25,6 +25,9 @@ export class User extends BaseModel {
   firstName: string;
 
   @Column({ nullable: true })
+  companyName: string;
+
+  @Column({ nullable: true })
   lastName: string;
 
   @Column({ nullable: true })
