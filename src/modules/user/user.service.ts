@@ -26,6 +26,7 @@ export class UserService {
     const verificationCode = randomCode();
     const dataForInsert = {
       email: createUserDto.email,
+      companyName: createUserDto.companyName,
       codeExpiresAt: dayjs().add(3, "day").format(),
       phoneNumber: createUserDto.phoneNumber,
       password: encryptedPassword,
@@ -75,6 +76,7 @@ export class UserService {
         `u.type AS type`,
         `u.firstName AS "firstName"`,
         `u.lastName AS "lastName"`,
+        `u.companyName AS "companyName"`,
         `u.avatarImage AS "avatarImage"`,
         `u.phoneNumber AS "phoneNumber"`,
         `u.verificationCode AS "verificationCode"`,
