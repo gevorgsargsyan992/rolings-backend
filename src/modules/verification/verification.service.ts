@@ -43,13 +43,7 @@ export class VerificationService {
       verificationCode: null,
       codeExpiresAt: null,
     });
-    await this.emailSystemService.create({
-      email: user.email,
-      subject: sendGrid.template.VERIFY_SUCCESS.subject,
-      templateId: sendGrid.template.VERIFY_SUCCESS.id,
-      templateName: sendGrid.template.VERIFY_SUCCESS.name,
-      dynamicTemplateData: {},
-    });
+
     return {
       access_token: this.jwtService.sign({
         email: user.email,
