@@ -11,6 +11,7 @@ import { EmailSystemService } from "../email/email.service";
 import { randomCode } from "../../utils/random-code";
 import { VerifyUserDto } from "./dto/verify-user.dto";
 import { ResendVerificationCodeDto } from "./dto/resend-verification-code.dto";
+import { LoginTypes } from "../../helpers/login-types";
 
 @Injectable()
 export class VerificationService {
@@ -43,16 +44,11 @@ export class VerificationService {
       verificationCode: null,
       codeExpiresAt: null,
     });
-    await this.emailSystemService.create({
-      email: user.email,
-      subject: sendGrid.template.VERIFY_SUCCESS.subject,
-      templateId: sendGrid.template.VERIFY_SUCCESS.id,
-      templateName: sendGrid.template.VERIFY_SUCCESS.name,
-      dynamicTemplateData: {},
-    });
+
     return {
       access_token: this.jwtService.sign({
         email: user.email,
+        type: LoginTypes.USER,
         sub: Date.now().toString(),
       }),
       id: user.id,
