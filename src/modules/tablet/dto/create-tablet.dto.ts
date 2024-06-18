@@ -1,4 +1,5 @@
-import { IsString, IsNotEmpty, IsNumber } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { TabletStatus } from "src/helpers/tablet-status";
 
 export class CreateTabletDto {
   @IsString()
@@ -23,4 +24,11 @@ export class CreateTabletStatusDto {
   @IsNumber()
   @IsNotEmpty()
   lng: number;
+}
+
+export class UpdateTabletInfoDto {
+  @IsNumber()
+  @IsOptional()
+  @IsNotEmpty()
+  status: TabletStatus;
 }

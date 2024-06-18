@@ -1,4 +1,13 @@
-import { Controller, Post, Body, UseGuards, Get, Param } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Delete,
+} from "@nestjs/common";
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
@@ -6,6 +15,7 @@ import { TabletService } from "./tablet.service";
 import {
   CreateTabletDto,
   CreateTabletStatusDto,
+  UpdateTabletInfoDto,
 } from "./dto/create-tablet.dto";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 
@@ -46,5 +56,24 @@ export class TabletController {
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.tabletService.findOne(+id);
+  }
+
+  @ApiOperation({
+    summary: "Update tablet info",
+  })
+  @Patch(":id")
+  update(
+    @Param("id") id: string,
+    @Body() updateTabletInfoDto: UpdateTabletInfoDto
+  ) {
+    return this.tabletService.update(+id, updateTabletInfoDto);
+  }
+
+  @ApiOperation({
+    summary: "Unassign video fro tablet",
+  })
+  @Delete(":id")
+  remove(@Param("id") id: string) {
+    return this.tabletService.unassignVideo(+id);
   }
 }

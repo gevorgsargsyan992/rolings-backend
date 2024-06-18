@@ -5,11 +5,13 @@ import { Repository } from "typeorm";
 import {
   CreateTabletDto,
   CreateTabletStatusDto,
+  UpdateTabletInfoDto,
 } from "./dto/create-tablet.dto";
 import { Tablet } from "./entities/tablet.entity";
 import { getEncryptedPassword } from "src/helpers/get-encrypted-password";
 import { TabletStatus } from "./entities/tablet-status.entity";
 import { VideoStatus } from "../../helpers/video-status";
+import { TabletVideo } from "../video/entities/tablet-video.entity";
 
 @Injectable()
 export class TabletService {
@@ -17,7 +19,9 @@ export class TabletService {
     @InjectRepository(Tablet)
     private tabletRepository: Repository<Tablet>,
     @InjectRepository(TabletStatus)
-    private tabletStatusRepository: Repository<TabletStatus>
+    private tabletStatusRepository: Repository<TabletStatus>,
+    @InjectRepository(TabletVideo)
+    private tabletVideoRepository: Repository<TabletVideo>
   ) {}
 
   async create(body: CreateTabletDto) {
@@ -114,5 +118,23 @@ export class TabletService {
       return null;
     }
     return tablet;
+  }
+
+  async update(id: number, dto: UpdateTabletInfoDto) {
+    await this.tabletRepository.update(
+      {
+        id,
+      },
+      {
+        status: dto.status,
+      }
+    );
+    return this.tabletRepository.findOne({
+      where: { id },
+    });
+  }
+
+  async unassignVideo(tabletVideoId: number) {
+    return this.tabletVideoRepository.softDelete(tabletVideoId);
   }
 }
