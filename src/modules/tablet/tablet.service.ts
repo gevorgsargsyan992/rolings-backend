@@ -135,6 +135,7 @@ export class TabletService {
   }
 
   async unassignVideo(tabletVideoId: number) {
-    return this.tabletVideoRepository.softDelete(tabletVideoId);
+    await this.tabletVideoRepository.softDelete(tabletVideoId);
+    return { success: true };
   }
 }
