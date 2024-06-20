@@ -32,3 +32,13 @@ export class UpdateTabletInfoDto {
   @IsNotEmpty()
   status: TabletStatus;
 }
+
+export class AssignVideoDto {
+  @IsNumber()
+  @IsNotEmpty()
+  tabletId: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  videoId: number;
+}

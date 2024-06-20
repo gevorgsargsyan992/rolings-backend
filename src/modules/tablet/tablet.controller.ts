@@ -13,6 +13,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { TabletService } from "./tablet.service";
 import {
+  AssignVideoDto,
   CreateTabletDto,
   CreateTabletStatusDto,
   UpdateTabletInfoDto,
@@ -75,5 +76,13 @@ export class TabletController {
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.tabletService.unassignVideo(+id);
+  }
+
+  @ApiOperation({
+    summary: "Assign video to tablet",
+  })
+  @Post("assign-video")
+  assignVideo(@Body() dto: AssignVideoDto) {
+    return this.tabletService.assignVideo(dto);
   }
 }
