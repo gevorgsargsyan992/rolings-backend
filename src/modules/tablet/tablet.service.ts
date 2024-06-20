@@ -88,7 +88,8 @@ export class TabletService {
         'tb.status AS "tabletStatus"',
         'tb.createdAt AS "createdAt"',
         'count(vd.id) AS "videoCount"',
-        `json_agg(json_build_object('videoId', vd.id, 'videoName', vd.name, 'tabletVideoId', tbv.id)) AS videos`,
+        `COALESCE(json_agg ( json_build_object ( 'videoId', "vd"."id", 'videoName', "vd"."name", 'tabletVideoId', "tbv"."id" ) ) FILTER (WHERE "vd"."id" IS NOT NULL), '[]'::json) AS videos 
+`,
       ])
       .leftJoin("tablet-video", "tbv", "tbv.tablet_id = tb.id")
       .leftJoin(
