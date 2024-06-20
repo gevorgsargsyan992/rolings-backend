@@ -1,6 +1,6 @@
 import {
-  Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -10,6 +10,10 @@ import { Tablet } from "../../tablet/entities/tablet.entity";
 import { Videos } from "./video.entity";
 
 @Entity("tablet-video")
+@Index("unique_tablet_video", ["tabletId", "videoId"], {
+  unique: true,
+  where: '"deletedAt" IS NULL',
+})
 export class TabletVideo extends BaseModel {
   @PrimaryGeneratedColumn()
   id: number;

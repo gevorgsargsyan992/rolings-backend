@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
 import {
+  AssignVideoDto,
   CreateTabletDto,
   CreateTabletStatusDto,
   UpdateTabletInfoDto,
@@ -132,6 +133,24 @@ export class TabletService {
     return this.tabletRepository.findOne({
       where: { id },
     });
+  }
+
+  async assignVideo(dto: AssignVideoDto) {
+    let response = {
+      success: true,
+    };
+    try {
+      await this.tabletVideoRepository
+        .createQueryBuilder()
+        .insert()
+        .into(TabletVideo)
+        .values(dto)
+        .execute();
+    } catch (error) {
+      response.success = false;
+      return response;
+    }
+    return response;
   }
 
   async unassignVideo(tabletVideoId: number) {
