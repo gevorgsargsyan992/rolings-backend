@@ -25,4 +25,11 @@ export class VideoService {
 
     return videos;
   }
+
+  async getAll() {
+    return this.tabletRepository
+      .createQueryBuilder("v")
+      .select(`v.id, v.createdAt, v.url, v.status, v.name`)
+      .getRawMany();
+  }
 }
