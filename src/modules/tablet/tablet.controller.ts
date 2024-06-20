@@ -70,7 +70,7 @@ export class TabletController {
   }
 
   @ApiOperation({
-    summary: "Unassign video fro tablet",
+    summary: "Unassign video for tablet",
   })
   @Delete(":id")
   remove(@Param("id") id: string) {
