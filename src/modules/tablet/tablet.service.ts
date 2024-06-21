@@ -80,7 +80,7 @@ export class TabletService {
   }
 
   async findOne(id: number) {
-    return this.tabletRepository
+    const tablet = await this.tabletRepository
       .createQueryBuilder("tb")
       .select([
         'tb.id AS "id"',
@@ -99,7 +99,25 @@ export class TabletService {
       )
       .where("tb.id= :id", { id })
       .groupBy("tb.id")
-      .getRawMany();
+      .getRawOne();
+    const lastActive = await this.tabletStatusRepository
+      .createQueryBuilder("ts")
+      .select([
+        'ts.createdAt AS "createdAt"',
+        "ts.lat AS latitude",
+        "ts.lng AS longitude",
+        'ts.status AS "status"',
+        'ts.tablet_id AS "tabletId"',
+      ])
+      .where("ts.tablet_id= :id", { id })
+      .orderBy("ts.id", "DESC")
+      .limit(1)
+      .getRawOne();
+
+    return {
+      ...tablet,
+      lastActive,
+    };
   }
 
   async validate(email: string) {
