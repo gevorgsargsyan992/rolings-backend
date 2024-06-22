@@ -75,7 +75,7 @@ export class TabletService {
         `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`
       )
       .groupBy("tb.id")
-      .orderBy("tb.id", "DESC")
+      .orderBy("tb.id", "ASC")
       .getRawMany();
   }
 
