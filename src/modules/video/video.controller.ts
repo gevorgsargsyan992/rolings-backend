@@ -1,9 +1,10 @@
-import { Controller, Get, Param, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { VideoService } from "./video.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { CreateVideoDto } from "./dto/get-video.dto";
 
 @Controller("Video")
 @ApiBearerAuth("BearerAuth")
@@ -26,5 +27,13 @@ export class TabletController {
   @Get()
   get() {
     return this.videoService.getAll();
+  }
+
+  @ApiOperation({
+    summary: "Create video",
+  })
+  @Post("")
+  createTabletStatus(@Body() body: CreateVideoDto) {
+    return this.videoService.createVideo(body);
   }
 }

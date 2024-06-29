@@ -3,12 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Videos } from "./entities/video.entity";
 import { TabletVideo } from "./entities/tablet-video.entity";
+import { CreateVideoDto } from "./dto/get-video.dto";
 
 @Injectable()
 export class VideoService {
   constructor(
     @InjectRepository(Videos)
-    private tabletRepository: Repository<Videos>,
+    private videoRepository: Repository<Videos>,
     @InjectRepository(TabletVideo)
     private tabletVideoRepository: Repository<TabletVideo>
   ) {}
@@ -27,9 +28,25 @@ export class VideoService {
   }
 
   async getAll() {
-    return this.tabletRepository
+    return this.videoRepository
       .createQueryBuilder("v")
       .select(`v.id, v.createdAt, v.url, v.status, v.name`)
       .getRawMany();
+  }
+
+  async createVideo(body: CreateVideoDto) {
+    const dataForInsert = {
+      url: body.url,
+      name: body.name,
+      status: body.status,
+    };
+    const newVideo = await this.videoRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Videos)
+      .values(dataForInsert)
+      .execute();
+
+    return newVideo;
   }
 }
