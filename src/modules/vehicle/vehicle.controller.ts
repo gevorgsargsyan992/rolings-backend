@@ -13,6 +13,7 @@ import { CreateVehicleDto } from "./dto/create-vehicle.dto";
 import { UpdateVehicleDto } from "./dto/update-vehicle.dto";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { CreateWeeklyReportDto } from "./dto/create-report.dto";
 
 @Controller("vehicle")
 @ApiBearerAuth("BearerAuth")
@@ -47,5 +48,13 @@ export class VehicleController {
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.vehicleService.remove(+id);
+  }
+
+  @ApiOperation({
+    summary: "Create weekly report",
+  })
+  @Post("report")
+  createReport(@Body() body: CreateWeeklyReportDto) {
+    return this.vehicleService.createReport(body);
   }
 }
