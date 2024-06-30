@@ -6,10 +6,10 @@ import { VideoService } from "./video.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { CreateVideoDto } from "./dto/get-video.dto";
 
-@Controller("Video")
+@Controller("video")
 @ApiBearerAuth("BearerAuth")
 @UseGuards(JwtAuthGuard)
-@ApiTags("Video")
+@ApiTags("video")
 export class TabletController {
   constructor(private readonly videoService: VideoService) {}
 
@@ -35,5 +35,13 @@ export class TabletController {
   @Post("")
   createTabletStatus(@Body() body: CreateVideoDto) {
     return this.videoService.createVideo(body);
+  }
+
+  @ApiOperation({
+    summary: "Get not assigned videos by tabletId",
+  })
+  @Get("/notAssigned/:tabletId")
+  notAssignedVideos(@Param("tabletId") id: string) {
+    return this.videoService.notAssignedVideos(+id);
   }
 }

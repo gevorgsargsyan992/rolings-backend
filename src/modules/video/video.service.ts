@@ -49,4 +49,18 @@ export class VideoService {
 
     return newVideo;
   }
+
+  async notAssignedVideos(id: number) {
+    return this.videoRepository
+      .createQueryBuilder("v")
+      .select(`v.id, v.createdAt, v.url, v.status, v.name`)
+      .leftJoin(
+        "tablet-video",
+        "tv",
+        "tv.video_id = v.ID AND tv.tablet_id = :tabletId",
+        { tabletId: id }
+      )
+      .where(`tv.ID IS NULL and v."deletedAt" IS NULL`)
+      .getRawMany();
+  }
 }
