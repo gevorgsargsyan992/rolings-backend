@@ -16,6 +16,7 @@ import { VideoModule } from "./modules/video/video.module";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { mailerConfig } from "./config/mailer.config";
 import { VehicleModule } from "./modules/vehicle/vehicle.module";
+import { MonitoringModule } from "./modules/monitoring/monitoring.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { VehicleModule } from "./modules/vehicle/vehicle.module";
     TabletModule,
     VideoModule,
     VehicleModule,
+    MonitoringModule,
     MailerModule.forRoot(mailerConfig),
   ],
   providers: [

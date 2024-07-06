@@ -30,7 +30,7 @@ export class UserService {
       codeExpiresAt: dayjs().add(3, "day").format(),
       phoneNumber: createUserDto.phoneNumber,
       password: encryptedPassword,
-      type: UserTypes.ADMIN,
+      type: UserTypes.SELLER,
       verificationCode,
     };
 
