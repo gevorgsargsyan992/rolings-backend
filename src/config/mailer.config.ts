@@ -9,7 +9,7 @@ export const mailerConfig: MailerOptions = {
     secure: false, // Use SSL for production, otherwise false
     auth: {
       user: "rolingsllc@gmail.com",
-      pass: "kgtr mldv objv ulmm",
+      pass: "spaz irpp cxtg tnqw",
     },
   },
   defaults: {
