@@ -43,7 +43,7 @@ export class MonitoringService {
       .createQueryBuilder("vs")
       .select([
         "vs.vehicleIdId",
-        `vl.licensePlate AS vehicle`,
+        "vl.name AS vehicle",
         "vs.clientCount AS clients",
         "vs.reportDate AS date",
       ])
