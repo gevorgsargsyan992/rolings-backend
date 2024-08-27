@@ -5,13 +5,11 @@ import { Repository } from 'typeorm';
 import * as dayjs from 'dayjs';
 
 import { randomCode } from '../../utils/random-code';
-import { sendGrid } from '../../helpers/sendGrid';
 import { getEncryptedPassword } from './../../helpers/get-encrypted-password';
-import { EmailSystemService } from '../email/email.service';
 import { User } from '../user/entities/user.entity';
 import { VerifyEmailDto } from './dto/verify-email.dto';
-import { UserLoginDto } from '../auth/dto/user-login.dto';
 import { VerifyUserDto } from '../verification/dto/verify-user.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class RestorePasswordService {
@@ -19,7 +17,7 @@ export class RestorePasswordService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-    private readonly emailSystemService: EmailSystemService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async verifyEmail(verifyEmailDto: VerifyEmailDto) {
@@ -37,20 +35,24 @@ export class RestorePasswordService {
       { id: existingOrg.id },
       {
         verificationCode,
+        codeExpiresAt: dayjs().add(2, "day").format(),
       },
     );
-
-    const dynamicTemplateData = {
-      code: verificationCode,
-    };
-
-    await this.emailSystemService.create({
-      email: verifyEmailDto.email,
-      subject: sendGrid.template.VERIFY_EMAIL.subject,
-      templateId: sendGrid.template.VERIFY_EMAIL.id,
-      templateName: sendGrid.template.VERIFY_EMAIL.name,
-      dynamicTemplateData,
-    });
+    // Send email
+    try {
+      await this.mailerService.sendMail({
+        to: verifyEmailDto.email,
+        subject: "Restore Password",
+        template: "./restorePassword", // The name of the template file
+        context: {
+          // Data to be sent to template engine
+          name: existingOrg.companyName,
+          code: verificationCode,
+        },
+      });
+    } catch (error) {
+      console.log(111111, error);
+    }
 
     return { success: true };
   }
@@ -72,49 +74,15 @@ export class RestorePasswordService {
       throw new BadRequestException('Code is already expires');
     }
 
-    await this.userRepository.update(verifyCodeDto, {
+    const encryptedPassword = await getEncryptedPassword(verifyCodeDto.password);
+
+    await this.userRepository.update({email: verifyCodeDto.email}, {
       verifiedAt: new Date(),
       verificationCode: null,
       codeExpiresAt: null,
+      password: encryptedPassword,
     });
 
     return { success: true };
-  }
-
-  async changePassword(userLoginDto: UserLoginDto) {
-    const user = await this.userRepository.findOne({
-      where: { email: userLoginDto.email },
-    });
-
-    if (!user) {
-      throw new BadRequestException('Something went wrong');
-    }
-
-    const encryptedPassword = await getEncryptedPassword(userLoginDto.password);
-    const dataForUpdate = {
-      password: encryptedPassword,
-    };
-
-    await this.userRepository.update(
-      {
-        id: user.id,
-      },
-      dataForUpdate,
-    );
-
-    await this.emailSystemService.create({
-      email: userLoginDto.email,
-      subject: sendGrid.template.CHANGE_PASSWORD_SUCCESS.subject,
-      templateId: sendGrid.template.CHANGE_PASSWORD_SUCCESS.id,
-      templateName: sendGrid.template.CHANGE_PASSWORD_SUCCESS.name,
-      dynamicTemplateData: {},
-    });
-
-    return {
-      access_token: this.jwtService.sign({
-        email: user.email,
-        sub: Date.now().toString(),
-      }),
-    };
   }
 }

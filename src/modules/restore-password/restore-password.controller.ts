@@ -1,4 +1,3 @@
-import { UserLoginDto } from './../auth/dto/user-login.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { Controller, Post, Body, Patch } from '@nestjs/common';
 import { RestorePasswordService } from './restore-password.service';
@@ -23,18 +22,10 @@ export class RestorePasswordController {
   }
 
   @ApiOperation({
-    summary: 'Verify the new code',
-  })
-  @Patch('verify-code')
-  verifyCode(@Body() verifyEmailDto: VerifyUserDto) {
-    return this.restorePasswordService.verifyCode(verifyEmailDto);
-  }
-
-  @ApiOperation({
-    summary: "Change user's password",
+    summary: 'change password',
   })
   @Patch()
-  changePassword(@Body() userLoginDto: UserLoginDto) {
-    return this.restorePasswordService.changePassword(userLoginDto);
+  verifyCode(@Body() verifyEmailDto: VerifyUserDto) {
+    return this.restorePasswordService.verifyCode(verifyEmailDto);
   }
 }
