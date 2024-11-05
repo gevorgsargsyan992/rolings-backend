@@ -8,10 +8,11 @@ import {
   Delete,
   UseGuards,
   Query,
+  Put,
 } from "@nestjs/common";
 import { VehicleService } from "./vehicle.service";
 import { CreateVehicleDto } from "./dto/create-vehicle.dto";
-import { UpdateVehicleDto } from "./dto/update-vehicle.dto";
+import { UpdateVehicleDto, UpdateVehicleTabletDto } from "./dto/update-vehicle.dto";
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { CreateWeeklyReportDto } from "./dto/create-report.dto";
@@ -48,8 +49,19 @@ export class VehicleController {
   }
 
   @Patch(":id")
+  @ApiOperation({
+    summary: "Update Vehicles info",
+  })
   update(@Param("id") id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
     return this.vehicleService.update(+id, updateVehicleDto);
+  }
+
+  @Put(":id")
+  @ApiOperation({
+    summary: "Update or set tablet on Vehicle",
+  })
+  updateTablet(@Param("id") id: string, @Body() updateVehicleTabletDto: UpdateVehicleTabletDto) {
+    return this.vehicleService.updateTablet(+id, updateVehicleTabletDto);
   }
 
   @Delete(":id")

@@ -1,11 +1,15 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateVehicleDto } from "./dto/create-vehicle.dto";
-import { UpdateVehicleDto } from "./dto/update-vehicle.dto";
+import {
+  UpdateVehicleDto,
+  UpdateVehicleTabletDto,
+} from "./dto/update-vehicle.dto";
 import { Vehicle } from "./entities/vehicle.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateWeeklyReportDto } from "./dto/create-report.dto";
 import { VehicleStats } from "./entities/vehicle-stats.entity";
+import { VehicleTablet } from "./entities/vehicle-tablet.entity";
 
 @Injectable()
 export class VehicleService {
@@ -13,7 +17,9 @@ export class VehicleService {
     @InjectRepository(Vehicle)
     private vehicleRepository: Repository<Vehicle>,
     @InjectRepository(VehicleStats)
-    private vehicleStatsRepository: Repository<VehicleStats>
+    private vehicleStatsRepository: Repository<VehicleStats>,
+    @InjectRepository(VehicleTablet)
+    private vehicleTabletRepository: Repository<VehicleTablet>
   ) {}
 
   async create(body: CreateVehicleDto) {
@@ -58,12 +64,46 @@ export class VehicleService {
     return `This action returns a #${id} vehicle`;
   }
 
-  update(id: number, updateVehicleDto: UpdateVehicleDto) {
-    return `This action updates a #${id} vehicle`;
+  async update(id: number, updateVehicleDto: UpdateVehicleDto) {
+    await this.vehicleRepository.update(
+      {
+        id,
+      },
+      {
+        ...updateVehicleDto,
+      }
+    );
+
+    return this.findAll(0, 20);
   }
 
   remove(id: number) {
     return `This action removes a #${id} vehicle`;
+  }
+
+  async updateTablet(
+    id: number,
+    updateVehicleTabletDto: UpdateVehicleTabletDto
+  ) {
+    const vehicleTablet = await this.vehicleTabletRepository.findOne({
+      where: { tabletId: updateVehicleTabletDto.tabletId },
+    });
+    if (vehicleTablet) {
+      if (vehicleTablet.vehicleId !== id) { // assign tablet to another vehicle
+        await this.vehicleTabletRepository.softDelete({ tabletId: updateVehicleTabletDto.tabletId });
+        await this.vehicleTabletRepository.softDelete({ vehicleId: id });
+      }
+      else return { success: true };
+    }
+      // Create new vehicle tablet record (assign tablet to new vehicle)
+      await this.vehicleRepository
+      .createQueryBuilder()
+      .insert()
+      .into(VehicleTablet)
+      .values({ tabletId: updateVehicleTabletDto.tabletId, vehicleId: id })
+      .execute();
+
+    return { success: true };
   }
 
   async createReport(body: CreateWeeklyReportDto) {
