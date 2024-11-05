@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { VehicleStatus } from "src/helpers/vehicle-status";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { VehicleStatus } from "src/helpers/vehicle";
 
 export class CreateVehicleDto {
   @IsString()
@@ -13,6 +13,7 @@ export class CreateVehicleDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @IsEnum(VehicleStatus, { each: true })
   status: VehicleStatus;
 
   @IsString()
