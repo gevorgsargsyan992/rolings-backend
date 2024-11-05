@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { VehicleStatus } from "src/helpers/vehicle-status";
+import { VehicleStatus } from "src/helpers/vehicle";
 
 export class CreateVehicleDto {
   @IsString()

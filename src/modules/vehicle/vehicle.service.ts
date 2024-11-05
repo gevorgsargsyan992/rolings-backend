@@ -10,6 +10,7 @@ import { Repository } from "typeorm";
 import { CreateWeeklyReportDto } from "./dto/create-report.dto";
 import { VehicleStats } from "./entities/vehicle-stats.entity";
 import { VehicleTablet } from "./entities/vehicle-tablet.entity";
+import { VehicleTabletAction } from "src/helpers/vehicle";
 
 @Injectable()
 export class VehicleService {
@@ -77,14 +78,23 @@ export class VehicleService {
     return this.findAll(0, 20);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} vehicle`;
+  async remove(id: number) {
+    await this.vehicleRepository.softDelete({ id });
+    await this.vehicleTabletRepository.softDelete({ vehicleId: id });
+
+    return { success: true };
   }
 
   async updateTablet(
     id: number,
     updateVehicleTabletDto: UpdateVehicleTabletDto
   ) {
+    // delete tablet from vehicle
+    if (updateVehicleTabletDto.action === VehicleTabletAction.REMOVE) {
+      await this.vehicleTabletRepository.softDelete({ tabletId: updateVehicleTabletDto.tabletId });
+      return { success: true };
+    }
+    // update or relation
     const vehicleTablet = await this.vehicleTabletRepository.findOne({
       where: { tabletId: updateVehicleTabletDto.tabletId },
     });

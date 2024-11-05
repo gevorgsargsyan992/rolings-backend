@@ -58,13 +58,16 @@ export class VehicleController {
 
   @Put(":id")
   @ApiOperation({
-    summary: "Update or set tablet on Vehicle",
+    summary: "Update or set tablet on Vehicle. action values (REMOVE, UPDATE)",
   })
   updateTablet(@Param("id") id: string, @Body() updateVehicleTabletDto: UpdateVehicleTabletDto) {
     return this.vehicleService.updateTablet(+id, updateVehicleTabletDto);
   }
 
   @Delete(":id")
+  @ApiOperation({
+    summary: "delete vehicle",
+  })
   remove(@Param("id") id: string) {
     return this.vehicleService.remove(+id);
   }
