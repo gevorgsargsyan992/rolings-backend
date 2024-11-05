@@ -11,7 +11,7 @@ import { VehicleStats } from "./entities/vehicle-stats.entity";
 export class VehicleService {
   constructor(
     @InjectRepository(Vehicle)
-    private videoRepository: Repository<Vehicle>,
+    private vehicleRepository: Repository<Vehicle>,
     @InjectRepository(VehicleStats)
     private vehicleStatsRepository: Repository<VehicleStats>
   ) {}
@@ -23,7 +23,7 @@ export class VehicleService {
       status: body.status,
       color: body.color,
     };
-    const newVehicle = await this.videoRepository
+    const newVehicle = await this.vehicleRepository
       .createQueryBuilder()
       .insert()
       .into(Vehicle)
@@ -32,8 +32,26 @@ export class VehicleService {
     return newVehicle;
   }
 
-  findAll() {
-    return `This action returns all vehicle`;
+  async findAll(offset: number = 0, limit: number = 10) {
+    const result = await this.vehicleRepository
+      .createQueryBuilder("v")
+      .select([
+        `v.id AS "id"`,
+        `v."licensePlate" AS "licensePlate"`,
+        `v.name AS "name"`,
+        `v.status AS "status"`,
+        `v.color AS "color"`,
+        `vt."tabletIdId" AS "tabletId"`,
+      ])
+      .leftJoin("vehicle-tablet", "vt", "vt.vehicleIdId = v.id")
+      .orderBy("v.id", "ASC")
+      .offset(offset)
+      .limit(limit)
+      .getRawMany();
+
+    const count = await this.vehicleRepository.count();
+
+    return { result, count };
   }
 
   findOne(id: number) {

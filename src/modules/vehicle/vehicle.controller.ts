@@ -7,13 +7,15 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import { VehicleService } from "./vehicle.service";
 import { CreateVehicleDto } from "./dto/create-vehicle.dto";
 import { UpdateVehicleDto } from "./dto/update-vehicle.dto";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { CreateWeeklyReportDto } from "./dto/create-report.dto";
+import { PaginationDTO } from "src/helpers/pagination.dto";
 
 @Controller("vehicle")
 @ApiBearerAuth("BearerAuth")
@@ -22,17 +24,22 @@ import { CreateWeeklyReportDto } from "./dto/create-report.dto";
 export class VehicleController {
   constructor(private readonly vehicleService: VehicleService) {}
 
+  @Post()
   @ApiOperation({
     summary: "Create Vehicle",
   })
-  @Post()
   create(@Body() createVehicleDto: CreateVehicleDto) {
     return this.vehicleService.create(createVehicleDto);
   }
 
   @Get()
-  findAll() {
-    return this.vehicleService.findAll();
+  @ApiQuery({ type: PaginationDTO })
+  @ApiOperation({
+    summary: "Get all Vehicles with tablet",
+  })
+  findAll(@Query('offset') offset = 0, @Query('limit') limit = 20) {
+
+    return this.vehicleService.findAll(offset, limit);
   }
 
   @Get(":id")
