@@ -44,6 +44,9 @@ export class VehicleController {
   }
 
   @Get(":id")
+  @ApiOperation({
+    summary: "Get single Vehicles info",
+  })
   findOne(@Param("id") id: string) {
     return this.vehicleService.findOne(+id);
   }
