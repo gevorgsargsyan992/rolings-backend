@@ -62,7 +62,19 @@ export class VehicleService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} vehicle`;
+    return this.vehicleRepository
+      .createQueryBuilder("v")
+      .select([
+        `v.id AS "id"`,
+        `v."licensePlate" AS "licensePlate"`,
+        `v.name AS "name"`,
+        `v.status AS "status"`,
+        `v.color AS "color"`,
+        `v.createdAt AS "createdAt"`,
+        `vt."tabletIdId" AS "tabletId"`,
+      ])
+      .leftJoin("vehicle-tablet", "vt", "vt.vehicleIdId = v.id")
+      .getRawOne();
   }
 
   async update(id: number, updateVehicleDto: UpdateVehicleDto) {
@@ -91,7 +103,9 @@ export class VehicleService {
   ) {
     // delete tablet from vehicle
     if (updateVehicleTabletDto.action === VehicleTabletAction.REMOVE) {
-      await this.vehicleTabletRepository.softDelete({ tabletId: updateVehicleTabletDto.tabletId });
+      await this.vehicleTabletRepository.softDelete({
+        tabletId: updateVehicleTabletDto.tabletId,
+      });
       return { success: true };
     }
     // update or relation
@@ -99,14 +113,16 @@ export class VehicleService {
       where: { tabletId: updateVehicleTabletDto.tabletId },
     });
     if (vehicleTablet) {
-      if (vehicleTablet.vehicleId !== id) { // assign tablet to another vehicle
-        await this.vehicleTabletRepository.softDelete({ tabletId: updateVehicleTabletDto.tabletId });
+      if (vehicleTablet.vehicleId !== id) {
+        // assign tablet to another vehicle
+        await this.vehicleTabletRepository.softDelete({
+          tabletId: updateVehicleTabletDto.tabletId,
+        });
         await this.vehicleTabletRepository.softDelete({ vehicleId: id });
-      }
-      else return { success: true };
+      } else return { success: true };
     }
-      // Create new vehicle tablet record (assign tablet to new vehicle)
-      await this.vehicleRepository
+    // Create new vehicle tablet record (assign tablet to new vehicle)
+    await this.vehicleRepository
       .createQueryBuilder()
       .insert()
       .into(VehicleTablet)
