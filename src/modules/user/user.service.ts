@@ -64,7 +64,18 @@ export class UserService {
   }
 
   findAll() {
-    return this.userRepository.find();
+    return this.userRepository
+      .createQueryBuilder("u")
+      .select([
+        `u.id AS id`,
+        `u.type AS type`,
+        `u.firstName AS "firstName"`,
+        `u.lastName AS "lastName"`,
+        `u.companyName AS "companyName"`,
+        `u.avatarImage AS "avatarImage"`,
+        `u.phoneNumber AS "phoneNumber"`,
+      ])
+    .getRawMany();
   }
 
   findOne(id: number) {
