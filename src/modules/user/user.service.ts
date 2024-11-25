@@ -68,6 +68,7 @@ export class UserService {
       .createQueryBuilder("u")
       .select([
         `u.id AS id`,
+        `u.email AS email`,
         `u.type AS type`,
         `u.firstName AS "firstName"`,
         `u.lastName AS "lastName"`,
@@ -75,7 +76,7 @@ export class UserService {
         `u.avatarImage AS "avatarImage"`,
         `u.phoneNumber AS "phoneNumber"`,
       ])
-    .getRawMany();
+      .getRawMany();
   }
 
   findOne(id: number) {
