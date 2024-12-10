@@ -77,7 +77,7 @@ export class VehicleService {
       .getRawOne();
   }
 
-  async update(id: number, updateVehicleDto: UpdateVehicleDto) {
+  async update(id: number, updateVehicleDto: CreateVehicleDto) {
     await this.vehicleRepository.update(
       {
         id,
