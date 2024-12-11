@@ -74,6 +74,7 @@ export class VehicleService {
         `vt."tabletIdId" AS "tabletId"`,
       ])
       .leftJoin("vehicle-tablet", "vt", "vt.vehicleIdId = v.id")
+      .where("v.id = :id", { id })
       .getRawOne();
   }
 
