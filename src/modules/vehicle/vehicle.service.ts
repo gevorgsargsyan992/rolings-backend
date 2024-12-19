@@ -102,10 +102,13 @@ export class VehicleService {
     id: number,
     updateVehicleTabletDto: UpdateVehicleTabletDto
   ) {
+    if( !updateVehicleTabletDto.tabletId && updateVehicleTabletDto.action !== VehicleTabletAction.REMOVE) {
+      throw new BadRequestException('Tablet id is required');
+    }
     // delete tablet from vehicle
-    if (updateVehicleTabletDto.action === VehicleTabletAction.REMOVE) {
+    if (updateVehicleTabletDto.action === VehicleTabletAction.REMOVE && updateVehicleTabletDto.tabletId === 0) {
       await this.vehicleTabletRepository.softDelete({
-        tabletId: updateVehicleTabletDto.tabletId,
+        vehicleId: id,
       });
       return { success: true };
     }
