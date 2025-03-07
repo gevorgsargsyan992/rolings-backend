@@ -40,6 +40,17 @@ export class UserController {
   }
 
   @ApiOperation({
+    summary: "Get user settings",
+  })
+  @ApiBearerAuth("BearerAuth")
+  @UseGuards(JwtAuthGuard)
+  @Get(":id")
+  userSettings(@Param("id") id: string) {
+    return this.userService.userSettings(+id);
+  }
+
+
+  @ApiOperation({
     summary: "Get a user",
   })
   @ApiBearerAuth("BearerAuth")

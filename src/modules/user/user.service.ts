@@ -79,6 +79,21 @@ export class UserService {
       .getRawMany();
   }
 
+  userSettings(id: number) {
+      return this.userRepository
+          .createQueryBuilder("u")
+          .where({ id })
+          .select([
+              `u.id AS id`,
+              `u.firstName AS "firstName"`,
+              `u.lastName AS "lastName"`,
+              `u.companyName AS "companyName"`,
+              `u.avatarImage AS "avatarImage"`,
+              `u.phoneNumber AS "phoneNumber"`,
+          ])
+          .getRawOne();
+  }
+
   findOne(id: number) {
     return this.userRepository
       .createQueryBuilder("u")
