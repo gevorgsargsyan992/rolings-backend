@@ -39,7 +39,7 @@ export class VehicleService {
     return newVehicle;
   }
 
-  async findAll(offset: number = 0, limit: number = 10) {
+  async findAll(offset: number = 0, limit: number = 100) {
     const result = await this.vehicleRepository
       .createQueryBuilder("v")
       .select([

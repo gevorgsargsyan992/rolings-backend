@@ -56,7 +56,7 @@ export class VehicleController {
   @ApiOperation({
     summary: "Get all Vehicles with tablet",
   })
-  findAll(@Query("offset") offset = 0, @Query("limit") limit = 20) {
+  findAll(@Query("offset") offset = 0, @Query("limit") limit = 100) {
     return this.vehicleService.findAll(offset, limit);
   }
 
