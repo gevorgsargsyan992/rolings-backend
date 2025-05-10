@@ -87,19 +87,24 @@ export class TabletService {
         "tb.uuid",
         'tb.status AS "tabletStatus"',
         'tb.createdAt AS "createdAt"',
+        'vh.name AS "vehicleName"',
+        'vh.licensePlate AS "vehicleLicensePlate"',
         'count(vd.id) AS "videoCount"',
         `COALESCE(json_agg ( json_build_object ( 'videoId', "vd"."id", 'videoName', "vd"."name", 'tabletVideoId', "tbv"."id" ) ) FILTER (WHERE "vd"."id" IS NOT NULL), '[]'::json) AS videos 
 `,
       ])
       .leftJoin("tablet-video", "tbv", "tbv.tablet_id = tb.id")
+      .leftJoin("vehicle-tablet", "vt", "vt.tabletIdId = tb.id")
+      .leftJoin("vehicle", "vh", "vt.vehicleIdId = vh.id")
       .leftJoin(
         "videos",
         "vd",
         `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`
       )
       .where("tb.id= :id", { id })
-      .groupBy("tb.id")
+      .groupBy("tb.id, vh.name, vh.licensePlate")
       .getRawOne();
+
     const lastActive = await this.tabletStatusRepository
       .createQueryBuilder("ts")
       .select([
