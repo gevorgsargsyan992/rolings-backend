@@ -15,7 +15,7 @@ export class MonitoringController {
   })
   @Get("/weekly")
   findWeekly() {
-    return this.monitoringService.findWeekly();
+    return [];
   }
 
   @ApiOperation({
@@ -23,7 +23,7 @@ export class MonitoringController {
   })
   @Get("/monthly")
   findMonthly() {
-    return this.monitoringService.findMonthly();
+    return [];
   }
 
   @ApiOperation({
@@ -31,6 +31,6 @@ export class MonitoringController {
   })
   @Get("/cars")
   findCarsReport() {
-    return this.monitoringService.findCarsReport();
+    return [];
   }
 }
