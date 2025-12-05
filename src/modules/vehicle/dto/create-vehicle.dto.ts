@@ -19,4 +19,9 @@ export class CreateVehicleDto {
   @IsString()
   @IsNotEmpty()
   color: string;
+
+
+  @IsNumber()
+  @IsOptional()
+  tabletId?: number;
 }

@@ -24,6 +24,10 @@ export class VehicleService {
   ) {}
 
   async create(body: CreateVehicleDto) {
+    let response = {
+      success: false,
+      data: null,
+    }
     const dataForInsert = {
       licensePlate: body.licensePlate,
       name: body.name,
@@ -35,8 +39,16 @@ export class VehicleService {
       .insert()
       .into(Vehicle)
       .values(dataForInsert)
+      .returning("*")
       .execute();
-    return newVehicle;
+    if (body.tabletId) {
+      await this.vehicleTabletRepository.save({tabletId: body.tabletId, vehicleId: newVehicle.identifiers[0].id});
+    }
+    if (newVehicle.identifiers[0].id){
+      response.success = true;
+      response.data = newVehicle.identifiers[0].id;
+    }
+    return response;
   }
 
   async findAll(offset: number = 0, limit: number = 100) {
