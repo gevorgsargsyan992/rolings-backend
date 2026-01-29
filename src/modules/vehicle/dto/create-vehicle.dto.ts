@@ -20,6 +20,10 @@ export class CreateVehicleDto {
   @IsNotEmpty()
   color: string;
 
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  description: string;
 
   @IsNumber()
   @IsOptional()

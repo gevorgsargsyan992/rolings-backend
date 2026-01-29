@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +10,7 @@ import { BaseModel } from "../../../helpers/base.model";
 import { Tablet } from "./tablet.entity";
 
 @Entity("tablet-status")
+@Index("idx_tablet_status_tablet_created_at", ["tabletId", "createdAt"])
 export class TabletStatus extends BaseModel {
   @PrimaryGeneratedColumn()
   id: number;

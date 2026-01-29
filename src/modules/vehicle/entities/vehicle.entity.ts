@@ -12,6 +12,9 @@ export class Vehicle extends BaseModel {
   @Column({ nullable: true })
   name: string;
 
+  @Column({ type: "text", nullable: true })
+  description: String;
+
   @Column({ nullable: false })
   status: number;
 

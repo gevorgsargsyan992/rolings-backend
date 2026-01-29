@@ -60,6 +60,7 @@ export class VehicleService {
         `v.name AS "name"`,
         `v.status AS "status"`,
         `v.color AS "color"`,
+        `v.description AS "description"`,
         `vt."tabletIdId" AS "tabletId"`,
       ])
       .leftJoin("vehicle-tablet", "vt", "vt.vehicleIdId = v.id")
@@ -83,6 +84,7 @@ export class VehicleService {
         `v.status AS "status"`,
         `v.color AS "color"`,
         `v.createdAt AS "createdAt"`,
+        `v.description AS "description"`,
         `vt."tabletIdId" AS "tabletId"`,
       ])
       .leftJoin("vehicle-tablet", "vt", "vt.vehicleIdId = v.id")
