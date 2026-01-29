@@ -52,6 +52,14 @@ export class TabletController {
   }
 
   @ApiOperation({
+    summary: "Get all tablets and assigned vehicles",
+  })
+  @Get('/tablets-with-assigned-vehicles')
+  findTabletsWithAssignedVehicles() {
+    return this.tabletService.findTabletsWithAssignedVehicles();
+  }
+
+  @ApiOperation({
     summary: "Get tablet info",
   })
   @Get(":id")
@@ -65,7 +73,7 @@ export class TabletController {
   @Patch(":id")
   update(
     @Param("id") id: string,
-    @Body() updateTabletInfoDto: UpdateTabletInfoDto
+    @Body() updateTabletInfoDto: UpdateTabletInfoDto,
   ) {
     return this.tabletService.update(+id, updateTabletInfoDto);
   }

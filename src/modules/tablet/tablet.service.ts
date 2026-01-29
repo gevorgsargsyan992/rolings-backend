@@ -22,7 +22,7 @@ export class TabletService {
     @InjectRepository(TabletStatus)
     private tabletStatusRepository: Repository<TabletStatus>,
     @InjectRepository(TabletVideo)
-    private tabletVideoRepository: Repository<TabletVideo>
+    private tabletVideoRepository: Repository<TabletVideo>,
   ) {}
 
   async create(body: CreateTabletDto) {
@@ -72,11 +72,39 @@ export class TabletService {
       .leftJoin(
         "videos",
         "vd",
-        `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`
+        `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`,
       )
       .groupBy("tb.id")
       .orderBy("tb.id", "ASC")
       .getRawMany();
+  }
+
+  async findTabletsWithAssignedVehicles() {
+    const data = await this.tabletRepository
+      .createQueryBuilder("tb")
+      .select([
+        'tb.id AS "id"',
+        'tb.status AS "tabletStatus"',
+        'count(vd.id) AS "videoCount"',
+        'vh.name AS "vehicleName"',
+        'MAX(ts.createdAt) AS "lastActive"',
+        'vh.licensePlate AS "vehicleLicensePlate"',
+        'vh.description AS "vehicleDescription"'
+      ])
+      .leftJoin("tablet-video", "tbv", "tbv.tablet_id = tb.id")
+      .leftJoin(
+        "videos",
+        "vd",
+        `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`,
+      )
+      .leftJoin("vehicle-tablet", "vt", "vt.tabletIdId = tb.id")
+      .leftJoin("vehicle", "vh", "vt.vehicleIdId = vh.id")
+      .leftJoin("tablet-status", "ts", "ts.tablet_id = tb.id")
+      .groupBy("tb.id, vh.name, vh.licensePlate, vh.description")
+      .orderBy("tb.id", "ASC")
+      .getRawMany();
+
+    return data;
   }
 
   async findOne(id: number) {
@@ -99,7 +127,7 @@ export class TabletService {
       .leftJoin(
         "videos",
         "vd",
-        `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`
+        `vd.id = tbv.video_id AND vd.status = ${VideoStatus.ACTIVE}`,
       )
       .where("tb.id= :id", { id })
       .groupBy("tb.id, vh.name, vh.licensePlate")
@@ -152,7 +180,7 @@ export class TabletService {
       },
       {
         status: dto.status,
-      }
+      },
     );
     return this.tabletRepository.findOne({
       where: { id },
