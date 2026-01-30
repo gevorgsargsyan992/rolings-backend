@@ -85,7 +85,7 @@ export class TabletService {
       .select([
         'tb.id AS "id"',
         'tb.status AS "tabletStatus"',
-        'count(vd.id) AS "videoCount"',
+        'COUNT(DISTINCT "vd"."id") AS "videoCount"',
         'vh.name AS "vehicleName"',
         'MAX(ts.createdAt) AS "lastActive"',
         'vh.licensePlate AS "vehicleLicensePlate"',
