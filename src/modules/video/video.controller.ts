@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from "@nestjs/common";
 
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { VideoService } from "./video.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { CreateVideoDto } from "./dto/get-video.dto";
+import { CreateVideoDto, UpdateVideoDto } from "./dto/get-video.dto";
 
 @Controller("video")
 @ApiBearerAuth("BearerAuth")
@@ -43,5 +52,21 @@ export class TabletController {
   @Get("/notAssigned/:tabletId")
   notAssignedVideos(@Param("tabletId") id: string) {
     return this.videoService.notAssignedVideos(+id);
+  }
+
+  @Patch(":id")
+  @ApiOperation({
+    summary: "Update video",
+  })
+  update(@Body() updateVideoDto: UpdateVideoDto, @Param("id") id: string) {
+    return this.videoService.update(+id, updateVideoDto);
+  }
+
+  @Delete(":id")
+  @ApiOperation({
+    summary: "delete video",
+  })
+  remove(@Param("id") id: string) {
+    return this.videoService.remove(+id);
   }
 }

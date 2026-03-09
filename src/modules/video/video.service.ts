@@ -3,7 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Videos } from "./entities/video.entity";
 import { TabletVideo } from "./entities/tablet-video.entity";
-import { CreateVideoDto } from "./dto/get-video.dto";
+import { CreateVideoDto, UpdateVideoDto } from "./dto/get-video.dto";
+import { VideoStatus } from "src/helpers/video-status";
 
 @Injectable()
 export class VideoService {
@@ -11,7 +12,7 @@ export class VideoService {
     @InjectRepository(Videos)
     private videoRepository: Repository<Videos>,
     @InjectRepository(TabletVideo)
-    private tabletVideoRepository: Repository<TabletVideo>
+    private tabletVideoRepository: Repository<TabletVideo>,
   ) {}
 
   async get(id: number) {
@@ -38,7 +39,7 @@ export class VideoService {
     const dataForInsert = {
       url: body.url,
       name: body.name,
-      status: body.status,
+      status: VideoStatus.ACTIVE,
     };
     const newVideo = await this.videoRepository
       .createQueryBuilder()
@@ -50,6 +51,24 @@ export class VideoService {
     return newVideo;
   }
 
+  async update(id: number, body: UpdateVideoDto) {
+    return this.videoRepository.update(
+      {
+        id,
+      },
+      {
+        ...body,
+      }
+    );
+  }
+
+  async remove(id: number) {
+    await this.videoRepository.softDelete({ id });
+    await this.tabletVideoRepository.softDelete({ videoId: id });
+
+    return { success: true };
+  }
+
   async notAssignedVideos(id: number) {
     return this.videoRepository
       .createQueryBuilder("v")
@@ -58,7 +77,7 @@ export class VideoService {
         "tablet-video",
         "tv",
         "tv.video_id = v.ID AND tv.tablet_id = :tabletId",
-        { tabletId: id }
+        { tabletId: id },
       )
       .where(`tv.ID IS NULL and v."deletedAt" IS NULL`)
       .getRawMany();
