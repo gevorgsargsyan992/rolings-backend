@@ -41,14 +41,33 @@ export class VideoService {
       name: body.name,
       status: VideoStatus.ACTIVE,
     };
-    const newVideo = await this.videoRepository
+    await this.videoRepository
       .createQueryBuilder()
       .insert()
       .into(Videos)
       .values(dataForInsert)
       .execute();
 
-    return newVideo;
+    return { success: true };
+  }
+
+  async update(id: number, body: UpdateVideoDto) {
+    await this.videoRepository.update(
+      {
+        id,
+      },
+      {
+        ...body,
+      }
+    );
+    return { success: true }
+  }
+
+  async remove(id: number) {
+    await this.videoRepository.softDelete({ id });
+    await this.tabletVideoRepository.softDelete({ videoId: id });
+
+    return { success: true };
   }
 
   async update(id: number, body: UpdateVideoDto) {
