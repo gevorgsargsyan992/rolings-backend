@@ -70,23 +70,6 @@ export class VideoService {
     return { success: true };
   }
 
-  async update(id: number, body: UpdateVideoDto) {
-    return this.videoRepository.update(
-      {
-        id,
-      },
-      {
-        ...body,
-      }
-    );
-  }
-
-  async remove(id: number) {
-    await this.videoRepository.softDelete({ id });
-    await this.tabletVideoRepository.softDelete({ videoId: id });
-
-    return { success: true };
-  }
 
   async notAssignedVideos(id: number) {
     return this.videoRepository
