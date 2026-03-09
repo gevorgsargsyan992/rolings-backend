@@ -32,6 +32,7 @@ export class VideoService {
     return this.videoRepository
       .createQueryBuilder("v")
       .select(`v.id, v.createdAt, v.url, v.status, v.name`)
+      .orderBy("v.id", "DESC")
       .getRawMany();
   }
 
