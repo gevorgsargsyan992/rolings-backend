@@ -41,18 +41,18 @@ export class VideoService {
       name: body.name,
       status: VideoStatus.ACTIVE,
     };
-    const newVideo = await this.videoRepository
+    await this.videoRepository
       .createQueryBuilder()
       .insert()
       .into(Videos)
       .values(dataForInsert)
       .execute();
 
-    return newVideo;
+    return { success: true };
   }
 
   async update(id: number, body: UpdateVideoDto) {
-    return this.videoRepository.update(
+    await this.videoRepository.update(
       {
         id,
       },
@@ -60,6 +60,7 @@ export class VideoService {
         ...body,
       }
     );
+    return { success: true }
   }
 
   async remove(id: number) {
