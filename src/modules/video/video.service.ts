@@ -3,7 +3,11 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Videos } from "./entities/video.entity";
 import { TabletVideo } from "./entities/tablet-video.entity";
-import { CreateVideoDto, UpdateVideoDto } from "./dto/get-video.dto";
+import {
+  AssignVideoToTabletsDto,
+  CreateVideoDto,
+  UpdateVideoDto,
+} from "./dto/get-video.dto";
 import { VideoStatus } from "src/helpers/video-status";
 
 @Injectable()
@@ -59,10 +63,29 @@ export class VideoService {
       },
       {
         ...body,
-      }
+      },
     );
-    return { success: true }
+    return { success: true };
   }
+
+  async assignVideoToTablets(id: number, body: AssignVideoToTabletsDto) {
+    await this.tabletVideoRepository
+      .createQueryBuilder()
+      .insert()
+      .values(
+        body.tabletIds.map((tabletId) => ({
+          videoId: id,
+          tabletId,
+        }))
+      )
+      .onConflict(`
+        ("video_id","tablet_id") 
+        WHERE "deletedAt" IS NULL 
+        DO UPDATE SET video_id = EXCLUDED.video_id
+      `)
+      .execute();
+     return { success: true };
+   }
 
   async remove(id: number) {
     await this.videoRepository.softDelete({ id });
@@ -70,7 +93,6 @@ export class VideoService {
 
     return { success: true };
   }
-
 
   async notAssignedVideos(id: number) {
     return this.videoRepository

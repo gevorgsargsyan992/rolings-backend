@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsString, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsString, IsNotEmpty, IsNumber, IsOptional, IsArray } from "class-validator";
 import { VideoStatus } from "src/helpers/video-status";
 
 export class GetVideoDto {
@@ -24,6 +24,12 @@ export class CreateVideoDto {
   @IsNumber()
   @IsOptional()
   status?: VideoStatus;
+}
+
+export class AssignVideoToTabletsDto {
+  @IsArray()
+  @IsNotEmpty()
+  tabletIds: number[];
 }
 
 export class UpdateVideoDto extends PartialType(CreateVideoDto) {}
