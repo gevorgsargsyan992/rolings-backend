@@ -66,6 +66,7 @@ export class TabletService {
         "tb.uuid",
         'tb.status AS "tabletStatus"',
         'tb.createdAt AS "createdAt"',
+        'ARRAY_AGG(vd.id) FILTER (WHERE vd.id IS NOT NULL) AS "videoIds"',
         'count(vd.id) AS "videoCount"',
       ])
       .leftJoin("tablet-video", "tbv", "tbv.tablet_id = tb.id")
