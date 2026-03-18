@@ -69,6 +69,9 @@ export class VideoService {
   }
 
   async assignVideoToTablets(id: number, body: AssignVideoToTabletsDto) {
+    // delete all existing tablet videos
+    await this.tabletVideoRepository.softDelete({ videoId: id });
+    // and insert new ones
     await this.tabletVideoRepository
       .createQueryBuilder()
       .insert()
@@ -76,16 +79,18 @@ export class VideoService {
         body.tabletIds.map((tabletId) => ({
           videoId: id,
           tabletId,
-        }))
+        })),
       )
-      .onConflict(`
+      .onConflict(
+        `
         ("video_id","tablet_id") 
         WHERE "deletedAt" IS NULL 
         DO UPDATE SET video_id = EXCLUDED.video_id
-      `)
+      `,
+      )
       .execute();
-     return { success: true };
-   }
+    return { success: true };
+  }
 
   async remove(id: number) {
     await this.videoRepository.softDelete({ id });
