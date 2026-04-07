@@ -17,6 +17,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { mailerConfig } from "./config/mailer.config";
 import { VehicleModule } from "./modules/vehicle/vehicle.module";
 import { MonitoringModule } from "./modules/monitoring/monitoring.module";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MonitoringModule } from "./modules/monitoring/monitoring.module";
       validationSchema: configValidationSchema,
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRootAsync({
       useClass: ThrottlerOptions,
     }),
