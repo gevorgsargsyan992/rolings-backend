@@ -12,8 +12,8 @@ export class TabletStatusCron {
     private tabletStatusRepository: Repository<TabletStatus>,
   ) {}
 
-  // Runs every 10 minutes
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  // Runs every minute
+  @Cron(CronExpression.EVERY_MINUTE)
   async handleCleanup() {
     console.log("Running TabletStatus cleanup cron");
     return this.tabletStatusRepository
