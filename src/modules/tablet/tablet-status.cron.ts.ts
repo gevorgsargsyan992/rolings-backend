@@ -15,7 +15,6 @@ export class TabletStatusCron {
   // Runs every minute
   @Cron(CronExpression.EVERY_MINUTE)
   async handleCleanup() {
-    console.log("Running TabletStatus cleanup cron");
     return this.tabletStatusRepository
       .createQueryBuilder()
       .delete()
