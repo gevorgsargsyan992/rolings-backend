@@ -19,7 +19,7 @@ export class TabletStatusCron {
       .createQueryBuilder()
       .delete()
       .from(TabletStatus)
-      .where("createdAt < NOW() - INTERVAL '7 day'")
+      .where("createdAt < NOW() - INTERVAL '45 day'")
       .orWhere("lat = 0")
       .execute();
   }
