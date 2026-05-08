@@ -14,7 +14,11 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { VideoService } from "./video.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { AssignVideoToTabletsDto, CreateVideoDto, UpdateVideoDto } from "./dto/get-video.dto";
+import {
+  AssignVideoToTabletsDto,
+  CreateVideoDto,
+  UpdateVideoDto,
+} from "./dto/get-video.dto";
 
 @Controller("video")
 @ApiBearerAuth("BearerAuth")
@@ -67,8 +71,19 @@ export class TabletController {
   @ApiOperation({
     summary: "Assign video to tablets",
   })
-  assignToTablets(@Body() assignVideoToTabletsDto: AssignVideoToTabletsDto, @Param("id") id: string) {
+  assignToTablets(
+    @Body() assignVideoToTabletsDto: AssignVideoToTabletsDto,
+    @Param("id") id: string,
+  ) {
     return this.videoService.assignVideoToTablets(+id, assignVideoToTabletsDto);
+  }
+
+  @Put("/priority/:id")
+  @ApiOperation({
+    summary: "Change video priority",
+  })
+  changeVideoPriority(@Body() body: any, @Param("id") id: string) {
+    return this.videoService.changeVideoPriority(id, body);
   }
 
   @Delete(":id")

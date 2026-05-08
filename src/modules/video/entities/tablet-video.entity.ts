@@ -1,4 +1,5 @@
 import {
+  Column,
   Entity,
   Index,
   JoinColumn,
@@ -17,6 +18,9 @@ import { Videos } from "./video.entity";
 export class TabletVideo extends BaseModel {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ nullable: false, default: 1 })
+    priority: number;
 
   @ManyToOne(() => Tablet, (t) => t.id, {
     nullable: false,

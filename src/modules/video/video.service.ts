@@ -5,6 +5,7 @@ import { Videos } from "./entities/video.entity";
 import { TabletVideo } from "./entities/tablet-video.entity";
 import {
   AssignVideoToTabletsDto,
+  ChangeVideoPriorityDto,
   CreateVideoDto,
   UpdateVideoDto,
 } from "./dto/get-video.dto";
@@ -89,6 +90,19 @@ export class VideoService {
       `,
       )
       .execute();
+    return { success: true };
+  }
+
+  async changeVideoPriority(id: string, body: ChangeVideoPriorityDto) {
+    body.videos.map((video) => {
+      this.tabletVideoRepository
+        .createQueryBuilder()
+        .update(TabletVideo)
+        .set({ priority: video.priority })
+        .where({ id: video.tabletVideoId })
+        .execute();
+    });
+
     return { success: true };
   }
 
