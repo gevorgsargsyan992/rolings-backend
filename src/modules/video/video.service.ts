@@ -28,6 +28,7 @@ export class VideoService {
         id,
       })
       .leftJoin("videos", "v", 'tbv."video_id" = v."id"')
+      .orderBy('tbv."priority"', "ASC")
       .execute();
 
     return videos;
