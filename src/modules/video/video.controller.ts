@@ -80,7 +80,7 @@ export class TabletController {
 
   @Put("/priority/:id")
   @ApiOperation({
-    summary: "Change video priority",
+    summary: "Change video priority for tablets",
   })
   changeVideoPriority(@Body() body: any, @Param("id") id: string) {
     return this.videoService.changeVideoPriority(id, body);
